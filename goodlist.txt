@@ -1,0 +1,4 @@
+1 baka seller1
+3 baka2 seller2
+2 baka3 seller2
+0 baka15 seller1
