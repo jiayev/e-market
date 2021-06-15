@@ -1,0 +1,7 @@
+﻿  main.cpp
+  stock.cpp
+D:\lyj\codes\t4\c++\EMarket\EMarket\EMarket\stock.cpp(168,23): warning C4101: “addBalance”: 未引用的局部变量
+  user.cpp
+D:\lyj\codes\t4\c++\EMarket\EMarket\EMarket\user.cpp(206,21): warning C4101: “addBalance”: 未引用的局部变量
+  正在生成代码...
+  EMarket.vcxproj -> D:\lyj\codes\t4\c++\EMarket\EMarket\Debug\EMarket.exe
