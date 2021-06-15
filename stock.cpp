@@ -172,27 +172,7 @@ void good::sellerGoodChange(string goodName)
 			userF1.open(userFileName, ios::in);
 			userF1 >> readPwd;
 			userF1 >> readTmp >> readBalance;
-			good* goodP = new good;
-			switch (good::getgoodType(goodName))
-			{
-			case 0:
-				delete goodP;
-				goodP = new good;
-				break;
-			case 1:
-				delete goodP;
-				goodP = new foods;
-				break;
-			case 2:
-				delete goodP;
-				goodP = new clothes;
-				break;
-			case 3:
-				delete goodP;
-				goodP = new books;
-				break;
-			}
-			newBalance = readBalance + goodP->getPrice(goodName);
+			newBalance = readBalance + getPrice(goodName);
 			userF1.close();
 			userF1.open(userFileName, ios::out);
 			userF1 << readPwd << " 1 " << newBalance;
@@ -218,7 +198,27 @@ float good::getPrice(string goodName)
 			goodF.open(fileName, ios::in);
 			goodF >> readPrice;
 			goodF.close();
-			return readPrice * getDiscount();
+			good* goodP = new good;
+			switch (good::getgoodType(goodName))
+			{
+			case 0:
+				delete goodP;
+				goodP = new good;
+				break;
+			case 1:
+				delete goodP;
+				goodP = new foods;
+				break;
+			case 2:
+				delete goodP;
+				goodP = new clothes;
+				break;
+			case 3:
+				delete goodP;
+				goodP = new books;
+				break;
+			}
+			return readPrice * goodP->getDiscount();
 		}
 	}
 	return -1;
@@ -306,6 +306,24 @@ void good::showGoods(string search, int* loginF, int method)//要写按情况判断输出
 			}
 			
 	}
+}
+
+bool good::isGoodExist(string goodName)
+{
+	fstream F1, F2;
+	int readType, readAmount;
+	string readName, readOwner;
+	F1.open("goodlist.txt", ios::in);
+	while (!F1.eof())
+	{
+		F1 >> readType >> readName >> readOwner;
+		if (readName == goodName) 
+		{ 
+			F1.close();
+			return true; 
+		}
+	}
+	return false;
 }
 
 float foods::getDiscount()
