@@ -355,3 +355,46 @@ float books::getDiscount()
 	F1.close();
 	return discount;
 }
+
+void lockgood::lockGood(string goodName, lockgood* startNode)
+{
+	lockgood* lNode = startNode;
+	if (!isGoodLocked(goodName, startNode))
+	{
+		while (lNode->Next != NULL)
+			lNode = lNode->Next;
+		lNode->Next = new lockgood;
+		lNode->Next->goodName = goodName;
+		lNode->Next->Next = NULL;
+	}
+}
+
+void lockgood::unlockGood(string goodName, lockgood* startNode)
+{
+	lockgood* lNode = startNode;
+	lockgood* lastNode;
+	if (isGoodLocked(goodName, startNode))
+	{
+		do
+		{
+			lastNode = lNode;
+			lNode = lNode->Next;
+		}
+		while (lNode->goodName != goodName);
+		lastNode->Next = lNode->Next;
+		delete lNode;
+	}
+}
+
+bool lockgood::isGoodLocked(string goodName, lockgood* startNode)
+{
+	lockgood* lNode = startNode;
+	string readName;
+	while (lNode->Next != NULL)
+	{
+		lNode = lNode->Next;
+		readName = lNode->goodName;
+		if (readName == goodName) return true;
+	}
+	return false;
+}

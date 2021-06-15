@@ -6,6 +6,7 @@ using namespace std;
 #include"user.h"
 #include"stock.h"
 class consumer;
+class lockgood;
 class order
 {
 public:
@@ -30,12 +31,13 @@ class orderform
 public:
 	orderform* next;
 	cart* comCart;
-	static void createForm(consumer* consumer);
-	static void payForm(consumer* consumer);
-	static void cancelForm(int formID, consumer* consumer);
+	static void createForm(consumer* consumer, lockgood* lockStart);
+	static void payForm(int payID, consumer* consumer, lockgood* lockStart);
+	static void cancelForm(int formID, consumer* consumer, lockgood* lockStart);
 	float calFormPrice();
 	static void showForms(consumer* consumer);
 	static int getFormAmounts(consumer* consumer);
+	static bool isFormExist(int formID, consumer* consumer);
 	int formID;
 private:
 	string consumerName;

@@ -10,6 +10,8 @@ int main() {
 	int* loginF = new int;
 	*loginF = 0;
 	user* onlineUser = NULL;
+	lockgood* startLock = new lockgood;
+	startLock->Next = NULL;
 	do
 	{
 		cout << "请输入你想要的操作\n";
@@ -106,7 +108,8 @@ int main() {
 					} while (!good::isGoodExist(goodName));
 					cout << "请输入你要添加的数量：";
 					cin >> goodAmount;
-					cart::addtoCart(goodName, dynamic_cast<consumer*>(onlineUser), goodAmount);
+					if (!lockgood::isGoodLocked(goodName, startLock)) cart::addtoCart(goodName, dynamic_cast<consumer*>(onlineUser), goodAmount);
+					else cout << "该商品已存在订单中！\n";
 				}
 				else if (actionNum2 == 2)
 				{
@@ -130,11 +133,27 @@ int main() {
 				}
 				else if (actionNum2 == 5)
 				{
-					orderform::createForm(dynamic_cast<consumer*>(onlineUser));
+					orderform::createForm(dynamic_cast<consumer*>(onlineUser), startLock);
 				}
 				else if (actionNum2 == 6)
 				{
 					orderform::showForms(dynamic_cast<consumer*>(onlineUser));
+				}
+				else if (actionNum2 == 7)
+				{
+					int formID;
+					cout << "请输入你要支付的订单号：";
+					cin >> formID;
+					if (orderform::isFormExist(formID, dynamic_cast<consumer*>(onlineUser))) orderform::payForm(formID, dynamic_cast<consumer*>(onlineUser), startLock);
+					else cout << "订单不存在！\n";
+				}
+				else if (actionNum2 == 8)
+				{
+					int formID;
+					cout << "请输入你要取消的订单号：";
+					cin >> formID;
+					if (orderform::isFormExist(formID, dynamic_cast<consumer*>(onlineUser))) orderform::cancelForm(formID, dynamic_cast<consumer*>(onlineUser), startLock);
+					else cout << "订单不存在！\n";
 				}
 			} while (actionNum2 != 4);
 		}

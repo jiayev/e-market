@@ -79,11 +79,11 @@ void cart::showCart(cart* startNode)
 	}
 }
 
-void orderform::createForm(consumer* consumer)
+void orderform::createForm(consumer* consumer, lockgood* lockStart)
 {
 	orderform* formNode,* newForm;
 	formNode = consumer->startForm;
-	while (consumer->startForm->next != NULL)
+	while (formNode->next != NULL)
 	{
 		formNode = formNode->next;
 	}
@@ -92,7 +92,54 @@ void orderform::createForm(consumer* consumer)
 	newForm->formID = formNode->formID + 1;
 	newForm->consumerName = consumer->name;
 	newForm->comCart = consumer->startNode->next;
+	cart* cartNode = newForm->comCart;
+	do
+	{
+		lockgood::lockGood(cartNode->Order.goodName, lockStart);
+		cartNode = cartNode->next;
+	} while (cartNode->next != NULL);
 	consumer->startNode->next = NULL;
+}
+
+void orderform::payForm(int payID, consumer* consumer, lockgood* lockStart)
+{
+	orderform* fNode;
+	fNode = consumer->startForm;
+	while (fNode->formID != payID)
+	{
+		fNode = fNode->next;
+	}
+	cart* cNode;
+	cNode = fNode->comCart->next;
+	if (consumer->balance >= fNode->calFormPrice())
+	{
+		do
+		{
+			consumer->buyGood(consumer, cNode->Order.goodName, cNode->Order.amount);
+			cNode = cNode->next;
+		} while (cNode != NULL);
+		cancelForm(payID, consumer, lockStart);
+	}
+}
+
+void orderform::cancelForm(int formID, consumer* consumer, lockgood* lockStart)
+{
+	orderform* fNode, * lastNode;
+	lastNode = new orderform;
+	fNode = consumer->startForm;
+	while (fNode->formID != formID)
+	{
+		lastNode = fNode;
+		fNode = fNode->next;
+	}
+	cart* cartNode = fNode->comCart;
+	do
+	{
+		lockgood::unlockGood(cartNode->Order.goodName, lockStart);
+		cartNode = cartNode->next;
+	} while (cartNode->next != NULL);
+	lastNode->next = fNode->next;
+	delete fNode;
 }
 
 float orderform::calFormPrice()
@@ -104,7 +151,7 @@ float orderform::calFormPrice()
 	{
 		price += Node->Order.amount * good::getPrice(Node->Order.goodName);
 		Node = Node->next;
-	}while (Node->next != NULL);
+	}while (Node!= NULL);
 	return price;
 }
 
@@ -129,7 +176,20 @@ int orderform::getFormAmounts(consumer* consumer)
 	while (readForm->next != NULL)
 	{
 		readForm = readForm->next;
-		amounts = readForm->formID;
+		amounts++;
 	}
 	return amounts;
+}
+
+bool orderform::isFormExist(int formID, consumer* consumer)
+{
+	orderform* fNode;
+	fNode = consumer->startForm;
+	while (fNode->next != NULL)
+	{
+		fNode = fNode->next;
+		if(fNode->formID == formID)
+			return true;
+	}
+	return false;
 }

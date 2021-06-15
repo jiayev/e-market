@@ -43,4 +43,14 @@ class books :public good
 public:
 	float getDiscount();
 };
+
+class lockgood
+{
+public:
+	string goodName;
+	lockgood* Next;
+	static void lockGood(string goodName, lockgood* startNode);
+	static void unlockGood(string goodName, lockgood* startNode);
+	static bool isGoodLocked(string goodName, lockgood* startNode);
+};
 #endif // !_STOCK
